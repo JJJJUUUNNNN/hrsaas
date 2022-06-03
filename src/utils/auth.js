@@ -1,6 +1,7 @@
 import Cookies from 'js-cookie'
 
-const TokenKey = 'vue_admin_template_token'
+// 设定一个独一无二的key
+const TokenKey = 'hrsaas-ihrm-token'
 
 export function getToken() {
   return Cookies.get(TokenKey)

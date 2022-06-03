@@ -1,5 +1,6 @@
 import request from '@/utils/request'
 
+// 登录接口的封装
 export function login(data) {
   // 返回一个axios对象 => promise  // 返回了一个promise对象
   return request({
