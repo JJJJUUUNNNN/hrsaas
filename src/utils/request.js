@@ -1,3 +1,4 @@
+import store from '@/store'
 import axios from 'axios'
 import { Message } from 'element-ui'
 
@@ -7,8 +8,15 @@ const service = axios.create({
   timeout: 5000 // 设置超时时间
 })
 
-// 1.请求拦截器
-service.interceptors.request.use()
+// 1.请求拦截器 - 统一注入token
+service.interceptors.request.use(config => {
+  if (store.getters.token) {
+    config.headers['Authorization'] = 'Bear ${store.getters.token}'
+  }
+  return config
+}, error => {
+  return Promise.reject(error)
+})
 
 // 2.响应拦截器
 service.interceptors.response.use(response => {
