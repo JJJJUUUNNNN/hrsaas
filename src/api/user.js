@@ -10,7 +10,7 @@ export function login(data) {
   })
 }
 
-export function getInfo(token) {
+export function getUserInfo(token) {
   return request({
     method: 'post',
     url: '/sys/profile'

@@ -1,11 +1,13 @@
 import { getToken, setToken, removeToken } from '@/utils/auth'
-import { login } from '@/api/user'
+import { login, getUserInfo } from '@/api/user'
+
 // 状态
 // 初始化的时候从缓存中读取状态 并赋值到初始化的状态上
 // Vuex的持久化 如何实现 ？ Vuex和前端缓存相结合
 const state = {
   // 设置token初始状态   token持久化 => 放到缓存中
-  token: getToken()
+  token: getToken(),
+  userInfo: {}
 }
 // 修改状态
 const mutations = {
@@ -19,6 +21,14 @@ const mutations = {
   removeToken(state) {
     state.token = null // 删除vuex的token
     removeToken() // 先清除 vuex  再清除缓存 vuex和 缓存数据的同步
+  },
+  // 设置用户信息
+  setUserInfo(state, userInfo) {
+    state.userInfo = { ...userInfo }
+  },
+  // 删除用户信息
+  removeUserInfo(state) {
+    state.userInfo = {}
   }
 }
 // 执行异步
@@ -34,6 +44,11 @@ const actions = {
     // context.commit('setToken', result.data.data)
     context.commit('setToken', result)
     // }
+  },
+  async getUserInfo(context) {
+    const result = await getUserInfo()
+    context.commit('setUserInfo', result)
+    return result
   }
 }
 
