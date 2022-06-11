@@ -52,6 +52,10 @@ const actions = {
     const baseResult = { ...result, ...baseInfo }
     context.commit('setUserInfo', baseResult)
     return baseResult
+  },
+  logout(context) {
+    context.commit('removeToken')
+    context.commit('removeUserInfo')
   }
 }
 
