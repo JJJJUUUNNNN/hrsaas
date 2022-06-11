@@ -10,7 +10,7 @@ export default {
     component: () => import('@/views/departments'),
 
     meta: {
-      title: '组织架构管理'
+      title: '组织架构'
     }
   }]
 }

@@ -40,6 +40,7 @@ service.interceptors.response.use(response => {
   } else {
     // 业务已经错误了 还能进then ? 不能 ！ 应该进catch
     Message.error(message) // 提示错误消息
+    console.log(response)
     return Promise.reject(new Error(message))
   }
 }, error => {
