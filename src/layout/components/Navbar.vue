@@ -10,7 +10,7 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="staffphoto" class="user-avatar">
+          <img v-imagerror="defaultImg" :src="staffphoto" class="user-avatar">
           <span class="name">{{ name }}</span>
           <i class="el-icon-caret-bottom" style="color:#fff" />
         </div>
@@ -42,10 +42,14 @@ export default {
     // Breadcrumb,
     Hamburger
   },
+  data() {
+    return {
+      defaultImg: require('@/assets/common/head.jpg')
+    }
+  },
   computed: {
     ...mapGetters([
       'sidebar',
-      'avatar',
       'name',
       'staffphoto'
     ])
