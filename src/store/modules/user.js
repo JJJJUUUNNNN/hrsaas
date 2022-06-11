@@ -1,4 +1,4 @@
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getToken, setToken, removeToken, setTimeStamp } from '@/utils/auth'
 import { login, getUserInfo } from '@/api/user'
 
 // 状态
@@ -43,6 +43,7 @@ const actions = {
     // actions 修改state 必须通过mutations
     // context.commit('setToken', result.data.data)
     context.commit('setToken', result)
+    setTimeStamp() // 将当前的最新时间写入缓存
     // }
   },
   async getUserInfo(context) {
