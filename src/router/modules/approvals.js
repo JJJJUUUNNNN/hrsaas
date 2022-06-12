@@ -10,7 +10,8 @@ export default {
     component: () => import('@/views/approvals'),
 
     meta: {
-      title: '审批管理'
+      title: '审批管理',
+      icon: 'tree-table'
     }
   }]
 }
