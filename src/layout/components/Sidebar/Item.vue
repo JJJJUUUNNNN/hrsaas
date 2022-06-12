@@ -1,7 +1,7 @@
 <script>
 export default {
   name: 'MenuItem',
-  functional: true,
+  functional: true, // 函数式组件，只用于接收props
   props: {
     icon: {
       type: String,
@@ -12,6 +12,8 @@ export default {
       default: ''
     }
   },
+
+  // render函数 可以返回一个结构体 用于渲染组件
   render(h, context) {
     const { icon, title } = context.props
     const vnodes = []
