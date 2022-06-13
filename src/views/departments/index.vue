@@ -11,7 +11,7 @@
         <el-tree :data="departs" :props="defaultProps" :default-expand-all="true">
           <!-- 作用域插槽 slot-scope："obj" -->
           <!-- 传入内容 插槽内容 有几个结点，就循环几次 data:每个节点的数据对象-->
-          <tree-tools slot-scope="{data}" :tree-node="data" />
+          <tree-tools slot-scope="{data}" :tree-node="data" @delDepts="getDepartments" />
 
         </el-tree>
       </el-card>
