@@ -23,7 +23,11 @@
     </div>
 
     <!-- 放置新增弹出层组件 -->
-    <add-dept :show-dialog="showDialog" :tree-node="node" />
+    <add-dept
+      :show-dialog="showDialog"
+      :tree-node="node"
+      @addDepts="getDepartments"
+    />
   </div>
 </template>
 

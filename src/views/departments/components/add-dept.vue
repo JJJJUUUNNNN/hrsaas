@@ -4,6 +4,7 @@
     <!-- 表单组件 el-form label-width设置label的宽度 -->
     <!-- 匿名插槽 -->
     <el-form
+      ref="deptForm"
       :model="formData"
       :rules="rules"
       label-width="120px"
@@ -22,7 +23,12 @@
           @focus="getEmployeeSimple"
         >
           <!-- 循环生成选项 -->
-          <el-option v-for="item in peoples" :key="item.id" :label="item.username" :value="item.username" />
+          <el-option
+            v-for="item in peoples"
+            :key="item.id"
+            :label="item.username"
+            :value="item.username"
+          />
         </el-select>
       </el-form-item>
       <el-form-item label="部门介绍" prop="introduce">
@@ -34,7 +40,7 @@
     <el-row slot="footer" type="flex" justify="center">
       <!-- 列被分为24 -->
       <el-col :span="6">
-        <el-button type="primary" size="small">确定</el-button>
+        <el-button type="primary" size="small" @click="btnOK">确定</el-button>
         <el-button size="small">取消</el-button>
       </el-col>
     </el-row>
@@ -42,7 +48,7 @@
 </template>
 
 <script>
-import { getDepartments } from '@/api/departments'
+import { addDepartments, getDepartments } from '@/api/departments'
 import { getEmployeeSimple } from '@/api/employees'
 export default {
   props: {
@@ -95,15 +101,25 @@ export default {
         manager: [{ required: true, message: '部门负责人不能为空', trigger: 'blur' }],
         introduce: [{ required: true, message: '部门介绍不能为空', trigger: 'blur' },
           { trigger: 'blur', min: 1, max: 300, message: '部门介绍要求1-50个字符' }]
-      }
+      },
+      peoples: [] // 接收获取的员工简单列表的数据
     }
   },
   methods: {
     async getEmployeeSimple() {
       this.peoples = await getEmployeeSimple()
+    },
+    btnOK() {
+      this.$refs.deptForm.validate(async isOK => {
+        if (isOK) {
+          // 调用新增接口 添加父部门的id
+          await addDepartments({ ...this.formData, pid: this.treeNode.id })
+          // 通知父组件重新拉取数据
+          this.$emit('addDepts') // 触发一个自定义事件，和之前那个无关
+        }
+      })
     }
-  },
-  peoples: [] // 接收获取的员工简单列表的数据
+  }
 }
 </script>
 
