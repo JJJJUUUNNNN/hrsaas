@@ -22,20 +22,32 @@
 
 <script>
 import TreeTools from './components/tree-tools.vue'
-
+import { getDepartments } from '@/api/departments'
+import { tranListToTreeData } from '@/utils'
 export default {
   components: {
     TreeTools
   },
   data() {
     return {
-      company: { name: '玛卡巴卡科技股份有限公司', manager: '负责人' },
+      company: { }, // 头部的数据结构
       defaultProps: {
         label: 'name' // 表示 从这个属性显示内容
       },
-      departs: [{ name: '总裁办', manager: '曹操', children: [{ name: '董事会', manager: '曹丕' }] },
-        { name: '行政部', manager: '刘备' },
-        { name: '人事部', manager: '孙权' }]
+      departs: []
+    }
+  },
+  created() {
+    this.getDepartments() // 调用自身方法
+  },
+  methods: {
+    async getDepartments() {
+      const result = await getDepartments()
+      this.company = { name: result.companyName, manager: '负责人' }
+      // this.departs = result.depts // 需要将其转化为树形结构
+      // 这里定义一个空串，因为，他是根 所有的子节点的数据都是“”
+      this.departs = tranListToTreeData(result.depts, '')
+      console.log(result)
     }
   }
 }
