@@ -23,7 +23,7 @@
     </div>
 
     <!-- 放置新增弹出层组件 -->
-    <add-dept :show-dialog="showDialog" />
+    <add-dept :show-dialog="showDialog" :tree-node="node" />
   </div>
 </template>
 
@@ -54,7 +54,7 @@ export default {
   methods: {
     async getDepartments() {
       const result = await getDepartments()
-      this.company = { name: result.companyName, manager: '负责人' }
+      this.company = { name: result.companyName, manager: '负责人', id: '' }
       // this.departs = result.depts // 需要将其转化为树形结构
       // 这里定义一个空串，因为，他是根 所有的子节点的数据都是“”
       this.departs = tranListToTreeData(result.depts, '')
