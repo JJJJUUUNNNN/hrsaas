@@ -24,7 +24,7 @@
 
     <!-- 放置新增弹出层组件 -->
     <add-dept
-      :show-dialog="showDialog"
+      :show-dialog.sync="showDialog"
       :tree-node="node"
       @addDepts="getDepartments"
     />
