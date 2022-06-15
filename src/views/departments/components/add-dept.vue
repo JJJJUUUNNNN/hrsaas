@@ -1,6 +1,6 @@
 <template>
   <!-- 新增部门的弹处弹出层 -->
-  <el-dialog title="新增部门" :visible="showDialog" @close="btnCancel">
+  <el-dialog :title="showTitle" :visible="showDialog" @close="btnCancel">
     <!-- 表单组件 el-form label-width设置label的宽度 -->
     <!-- 匿名插槽 -->
     <el-form
@@ -40,7 +40,11 @@
     <el-row slot="footer" type="flex" justify="center">
       <!-- 列被分为24 -->
       <el-col :span="6">
-        <el-button type="primary" size="small" @click="btnOK">确定</el-button>
+        <el-button
+          type="primary"
+          size="small"
+          @click="btnOK"
+        >确定</el-button>
         <el-button size="small" @click="btnCancel">取消</el-button>
       </el-col>
     </el-row>
@@ -48,7 +52,7 @@
 </template>
 
 <script>
-import { addDepartments, getDepartments } from '@/api/departments'
+import { addDepartments, getDepartments, getDepartDetail, updateDepartments } from '@/api/departments'
 import { getEmployeeSimple } from '@/api/employees'
 export default {
   props: {
@@ -68,20 +72,38 @@ export default {
     const checkNameRepeat = async(rule, value, callback) => {
       // 先获取最新的组织架构数据
       const { depts } = await getDepartments()
+      //  检查重复规则 需要支持两种 新增模式 / 编辑模式
+
       // depts是所有的部门数据
       // 如何去找某一个部门的所有子节点
-      const isRepeat = depts.filter(item => item.pid === this.treeNode.id)
-        .some(item => item.name === value)
+      let isRepeat = false
+      if (this.formData.id) {
+        // 有id就是编辑模式
+        // 编辑 张三=》校验规则 除了我之外 统计部门门下 不能有叫张三的
+        isRepeat = depts.filter(item => item.id !== this.formData.id && item.pid === this.treeNode.pid)
+          .some(item => item.name === value)
+      } else {
+        // 没id就是新增模式
+        isRepeat = depts.filter(item => item.pid === this.treeNode.id)
+          .some(item => item.name === value)
+      }
       isRepeat ? callback(new Error(`同级部门下已经有${value}的部门了`)) : callback()
     }
     // 检查编码重复
     const checkCodeRepeat = async(rule, value, callback) => {
       // 先要获取最新的组织架构数据
+      //  检查重复规则 需要支持两种 新增模式 / 编辑模式
       const { depts } = await getDepartments()
-      const isRepeat = depts.some(item => item.code === value && value) // 这里加一个 value不为空 因为我们的部门有可能没有code
+      let isRepeat = false
+      if (this.formData.id) {
+        // 编辑模式，因为编辑模式下，不能算自己
+        isRepeat = depts.some(item => item.id !== this.formData.id && item.code === value && value)
+      } else {
+        // 新增模式
+        isRepeat = depts.some(item => item.code === value && value) // 这里加一个 value不为空 因为我们的部门有可能没有code
+      }
       isRepeat ? callback(new Error(`组织架构中已经有部门使用${value}编码`)) : callback()
     }
-
     return {
       // 定义一个表单数据
       formData: {
@@ -105,15 +127,31 @@ export default {
       peoples: [] // 接收获取的员工简单列表的数据
     }
   },
+  computed: {
+    showTitle() {
+      return this.formData.id ? '编辑部门' : '新增部门'
+    }
+  },
   methods: {
     async getEmployeeSimple() {
       this.peoples = await getEmployeeSimple()
     },
+    // 获取部门详情
+    async getDepartDetail(id) {
+      // 由于props传值是异步的，所以如果传的是this.treeNode.id有可能获取不到id值
+      this.formData = await getDepartDetail(id)
+    },
     btnOK() {
       this.$refs.deptForm.validate(async isOK => {
         if (isOK) {
-          // 调用新增接口 添加父部门的id
-          await addDepartments({ ...this.formData, pid: this.treeNode.id })
+          // 要分清现在是编辑还是新增
+          if (this.formData.id) {
+            // 编辑模式 调用编辑接口
+            await updateDepartments(this.formData)
+          } else {
+            // 调用新增接口 添加父部门的id
+            await addDepartments({ ...this.formData, pid: this.treeNode.id })
+          }
           // 通知父组件重新拉取数据
           this.$emit('addDepts') // 触发一个自定义事件，和之前那个无关
           this.$emit('update:showDialog', false)
@@ -121,6 +159,14 @@ export default {
       })
     },
     btnCancel() {
+      // 重置数据  因为resetFields 只能重置 表单上的数据 非表单上的 比如 编辑中id 不能重置
+      this.formData = {
+        name: '',
+        code: '',
+        manager: '',
+        introduce: ''
+      }
+      // resetFields可以重置数据，但只能重置定义在data中的数据
       this.$refs.deptForm.resetFields() // 重置校验字段
       this.$emit('update:showDialog', false) // 关闭
     }

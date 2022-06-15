@@ -8,7 +8,11 @@
         <tree-tools :tree-node="company" :is-root="true" @addDepts="addDepts" />
 
         <!-- 树形结构 -->
-        <el-tree :data="departs" :props="defaultProps" :default-expand-all="true">
+        <el-tree
+          :data="departs"
+          :props="defaultProps"
+          :default-expand-all="true"
+        >
           <!-- 作用域插槽 slot-scope："obj" -->
           <!-- 传入内容 插槽内容 有几个结点，就循环几次 data:每个节点的数据对象-->
           <tree-tools
@@ -16,6 +20,7 @@
             :tree-node="data"
             @delDepts="getDepartments"
             @addDepts="addDepts"
+            @editDepts="editDepts"
           />
 
         </el-tree>
@@ -24,6 +29,7 @@
 
     <!-- 放置新增弹出层组件 -->
     <add-dept
+      ref="addDept"
       :show-dialog.sync="showDialog"
       :tree-node="node"
       @addDepts="getDepartments"
@@ -68,6 +74,15 @@ export default {
     addDepts(node) {
       this.showDialog = true // 显示弹出层
       this.node = node
+    },
+    // 点击编辑触发的父组件的方法
+    editDepts(node) {
+      this.showDialog = true
+      this.node = node // 存储传递过来的node数据
+      // 我们需要在这个位置调用子组件的方法
+      // 我们并不是直接在父组件中调用接口，而是父组件中调用子组件的方法，方法中调用接口
+      // 父组件 调用子组件的方法
+      this.$refs.addDept.getDepartDetail(node.id)
     }
   }
 }
