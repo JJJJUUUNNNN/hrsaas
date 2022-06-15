@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard-container">
+  <div v-loading="loading" class="dashboard-container">
 
     <div class="app-container">
       <!--组织架构的内容-->
@@ -55,7 +55,8 @@ export default {
         label: 'name', // 表示 从这个属性显示内容
         node: null // 记录当前点击的node结点
       },
-      departs: []
+      departs: [],
+      loading: false // 用来控制进度弹出层的显示和隐藏
     }
   },
   created() {
@@ -63,12 +64,13 @@ export default {
   },
   methods: {
     async getDepartments() {
+      this.loading = true
       const result = await getDepartments()
       this.company = { name: result.companyName, manager: '负责人', id: '' }
       // this.departs = result.depts // 需要将其转化为树形结构
       // 这里定义一个空串，因为，他是根 所有的子节点的数据都是“”
       this.departs = tranListToTreeData(result.depts, '')
-      console.log(result)
+      this.loading = false
     },
     // node是指我们当前点击的部门
     addDepts(node) {
