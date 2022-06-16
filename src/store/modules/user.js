@@ -7,7 +7,7 @@ import { login, getUserInfo, getUserDetailById } from '@/api/user'
 const state = {
   // 设置token初始状态   token持久化 => 放到缓存中
   token: getToken(),
-  userInfo: {}
+  userInfo: {} // 设为空对象，方便获取companyId,如果设为null会报错
 }
 // 修改状态
 const mutations = {
