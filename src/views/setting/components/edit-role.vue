@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { updateRole } from '@/api/setting'
+import { addRole, updateRole } from '@/api/setting'
 export default {
   data() {
     return {
@@ -43,6 +43,7 @@ export default {
           await updateRole(this.roleForm)
         } else {
           // 新增角色
+          await addRole(this.roleForm)
         }
         this.$parent.getRoleList()
         this.$message.success('操作成功')
@@ -52,6 +53,11 @@ export default {
       }
     },
     btnCancel() {
+      this.roleForm = {
+        name: '',
+        description: ''
+      }
+      this.$refs.roleForm.resetFields()
       this.showDialog = false
     }
   }

@@ -12,6 +12,7 @@
                 icon="el-icon-plus"
                 size="small"
                 type="primary"
+                @click="addRole"
               >新增角色</el-button>
             </el-row>
 
@@ -161,6 +162,9 @@ export default {
     },
     async editRole(id) {
       this.$refs.edit.roleForm = await getRoleDetail(id)
+      this.$refs.edit.showDialog = true
+    },
+    addRole() {
       this.$refs.edit.showDialog = true
     }
   }
