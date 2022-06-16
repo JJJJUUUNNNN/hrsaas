@@ -24,7 +24,11 @@
                 <!-- 作用域插槽 -->
                 <template slot-scope="{row}">
                   <el-button size="samll" type="success">分配权限</el-button>
-                  <el-button size="small" type="primary">编辑</el-button>
+                  <el-button
+                    size="small"
+                    type="primary"
+                    @click="editRole(row.id)"
+                  >编辑</el-button>
                   <el-button
                     size="samll"
                     type="danger"
@@ -93,13 +97,21 @@
         </el-tabs>
       </el-card>
     </div>
+
+    <!-- 编辑弹出层 -->
+    <edit-role ref="edit" :show-dialog="showDialog" />
+
   </div>
 </template>
 
 <script>
-import { getRoleList, getComanyInfo, deleteRole } from '@/api/setting'
+import { getRoleList, getComanyInfo, deleteRole, getRoleDetail } from '@/api/setting'
 import { mapGetters } from 'vuex'
+import EditRole from './components/edit-role.vue'
 export default {
+  components: {
+    EditRole
+  },
   data() {
     return {
       list: [], // 承接数组
@@ -113,7 +125,8 @@ export default {
         companyAddress: '',
         mailbox: '',
         remarks: ''
-      }
+      },
+      showDialog: false
     }
   },
   computed: {
@@ -145,6 +158,10 @@ export default {
       } catch (error) {
         console.log(error)
       }
+    },
+    async editRole(id) {
+      this.$refs.edit.roleForm = await getRoleDetail(id)
+      this.$refs.edit.showDialog = true
     }
   }
 }
