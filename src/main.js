@@ -20,6 +20,11 @@ import * as directives from '@/directives'
 import Component from '@/components'
 Vue.use(Component)
 
+import * as filters from '@/filters'
+// 注册全局过滤器
+Object.keys(filters).forEach(key => {
+  Vue.filter(key, filters[key])
+})
 // set ElementUI lang to EN
 Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明
