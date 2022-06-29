@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import * as XLSX from 'xlsx/xlsx.mjs'
+import * as XLSX from 'xlsx/xlsx.mini'
 export default {
   props: {
     beforeUpload: Function, // eslint-disable-line

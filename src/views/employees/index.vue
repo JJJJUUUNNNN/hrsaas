@@ -5,7 +5,7 @@
         <span slot="before">共166条记录</span>
         <template slot="after">
           <el-button size="small" type="warning" @click="$router.push('/import?type=user')">导入</el-button>
-          <el-button size="small" type="danger">导出</el-button>
+          <el-button size="small" type="danger" @click="exportData">导出</el-button>
           <el-button icon="plus" size="small" type="primary" @click="showDialog=true">新增员工</el-button>
         </template>
       </page-tools>
@@ -63,6 +63,7 @@
 import { delEmployee, getEmployeeList } from '@/api/employees'
 import EmployeeEnum from '@/api/constant/employees'
 import AddEmployee from './components/add-employee.vue'
+import { formatDate } from '@/filters'
 
 export default {
   components: {
@@ -108,6 +109,48 @@ export default {
       } catch (error) {
         console.log(error)
       }
+    },
+    exportData() {
+      const headers = {
+        '手机号': 'mobile',
+        '姓名': 'username',
+        '入职日期': 'timeOfEntry',
+        '聘用形式': 'formOfEmployment',
+        '转正日期': 'correctionTime',
+        '工号': 'workNumber',
+        '部门': 'departmentName'
+      }
+      // 懒加载
+      import('@/vendor/Export2Excel').then(async excel => {
+        const { rows } = await getEmployeeList({
+          page: 1,
+          size: this.page.total
+        })
+        const data = this.formatJson(headers, rows)
+        const multiHeader = [['姓名', '主要信息', '', '', '', '', '部门']]
+        const merges = ['A1:A2', 'B1:F1', 'G1:G2']
+
+        excel.export_json_to_excel({
+          header: Object.keys(headers),
+          data,
+          filename: '员工资料表',
+          multiHeader,
+          merges
+        })
+      })
+    },
+    formatJson(headers, rows) {
+      return rows.map(item => {
+        return Object.keys(headers).map(key => {
+          if (headers[key] === 'timeOfEntry' || headers[key] === 'correctionTime') {
+            return formatDate(item[headers[key]])
+          } else if (headers[key] === 'formOfEmployment') {
+            var en = EmployeeEnum.hireType.find(obj => obj.id === item[headers[key]])
+            return en ? en.value : '未知'
+          }
+          return item[headers[key]]
+        })
+      })
     }
   }
 }
