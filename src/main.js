@@ -20,6 +20,9 @@ import * as directives from '@/directives'
 import Component from '@/components'
 Vue.use(Component)
 
+import Print from 'vue-print-nb'
+Vue.use(Print)
+
 import * as filters from '@/filters'
 // 注册全局过滤器
 Object.keys(filters).forEach(key => {
