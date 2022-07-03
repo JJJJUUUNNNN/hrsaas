@@ -12,7 +12,7 @@
       :class="{disabled:fileComputed}"
       :http-request="upload"
     >
-      <i class="el-icon=plus" />
+      <i class="el-icon-plus" />
     </el-upload>
     <!-- 进度条 -->
     <el-progress
@@ -31,8 +31,8 @@
 import COS from 'cos-js-sdk-v5'
 // 实例化COS 这种方法不安全！
 const cos = new COS({
-  SecretId: 'AKIDWs2xd3EAqGRN3TfcJlxvd6JGyQcYFhtm',
-  SecretKey: 'jDRP7anlTw96nFSP7bpoX2HG0UihQt76'
+  SecretId: 'AKID0mqfEWqlUzIbeSkGRL6c7ML6c0B93To9',
+  SecretKey: 'JFwNZdeRF2iOp03FFsGNDm44vWFitmNF'
 })
 export default {
   data() {
@@ -96,8 +96,8 @@ export default {
       if (params.file) {
         // 执行上传操作
         cos.putObject({
-          Bucket: 'shenmemingzi-1312755393', // 存储桶
-          Region: 'ap-guangzhou', // 地域
+          Bucket: 'laogao-1302806742', // 存储桶名称
+          Region: 'ap-guangzhou', // 存储桶地域
           Key: params.file.name, // 文件名
           Body: params.file, // 要上传的文件对象
           StorageClass: 'STANDARD', // 上传的模式类型 直接默认标准模式即可

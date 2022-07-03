@@ -75,6 +75,15 @@
     <el-form label-width="220px">
       <div class="block">
         <div class="title">基础信息</div>
+        <!-- 员工照片 -->
+        <el-row class="inline-info">
+          <el-col :span="12">
+            <el-form-item label="员工头像">
+              <!-- 放置上传图片 -->
+              <image-upload ref="staffPhoto" />
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item label="最高学历">
           <el-select v-model="formData.theHighestDegreeOfEducation" class="inputW2">
             <el-option
@@ -90,6 +99,8 @@
 
         <el-form-item label="员工照片">
           <!-- 放置上传图片 -->
+          <!-- ref不要重名 -->
+          <image-upload ref="myStaffPhoto" />
         </el-form-item>
         <el-form-item label="国家/地区">
           <el-select v-model="formData.nationalArea" class="inputW2">
@@ -362,19 +373,42 @@ export default {
     this.getUserDetailById()
   },
   methods: {
+    // 读取下半部分内容
     async getPersonalDetail() {
       this.formData = await getPersonalDetail(this.userId)
+      if (this.formData.staffPhoto) {
+        this.$refs.myStaffPhoto.fileList = [{ url: this.formData.staffPhoto, upload: true }]
+      }
     },
+    // 保存时读取头像
     async savePersonal() {
-      this.formData = await updatePersonal({ ...this.formData, id: this.userId })
-      this.$message.success('保存成功')
+      const fileList = this.$refs.myStaffPhoto.fileList
+      if (fileList.some(item => !item.upload)) {
+        this.$message.warning('您当前还有图片没有上传完成！')
+        return
+      }
+      await updatePersonal({ ...this.formData, staffPhoto: fileList && fileList.length ? fileList[0].url : '' })
+      this.$message.success('保存基础信息成功')
     },
+    // 点击保存更新时获取图片内容
     async saveUser() {
-      await saveUserDetailById(this.userInfo)
-      this.$message.success('保存成功')
+      // 去读取员工上传的头像
+      const fileList = this.$refs.staffPhoto.fileList // 读取上传组件的数据
+      if (fileList.some(item => !item.upload)) {
+        // 如果此时去找upload为false的图片 找到了说明 有图片还没有上传完成
+        this.$message.warning('您当前还有图片没有上传完成！')
+        return
+      }
+      // 通过合并 得到一个新对象
+      await saveUserDetailById({ ...this.userInfo, staffPhoto: fileList && fileList.length ? fileList[0].url : '' })
+      this.$message.success('保存基本信息成功')
     },
+    // 读取上半部分的内容
     async getUserDetailById() {
       this.userInfo = await getUserDetailById(this.userId)
+      if (this.userInfo.staffPhoto) {
+        this.$refs.staffPhoto.fileList = [{ url: this.userInfo.staffPhoto, upload: true }]
+      }
     }
   }
 }
