@@ -25,6 +25,7 @@
                 :src="row.staffPhoto "
                 style="border-radius: 50%; width: 100px; height: 100px; padding: 10px"
                 alt=""
+                @click="showQrCode(row.staffPhoto)"
               >
             </template>
           </el-table-column>
@@ -68,6 +69,16 @@
     </div>
     <!-- 新增员工弹出层组件 -->
     <add-employee :show-dialog.sync="showDialog" />
+    <el-dialog
+      title="二维码"
+      :visible.sync="showCodeDialog"
+      @opened="showQrCode"
+      @close="imgUrl=''"
+    >
+      <el-row type="flex" justify="center">
+        <canvas ref="myCanvas" />
+      </el-row>
+    </el-dialog>
   </div>
 </template>
 
@@ -76,7 +87,7 @@ import { delEmployee, getEmployeeList } from '@/api/employees'
 import EmployeeEnum from '@/api/constant/employees'
 import AddEmployee from './components/add-employee.vue'
 import { formatDate } from '@/filters'
-
+import QrCode from 'qrcode'
 export default {
   components: {
     AddEmployee
@@ -90,7 +101,8 @@ export default {
         size: 10,
         total: 0
       },
-      showDialog: false
+      showDialog: false,
+      showCodeDialog: false
     }
   },
   created() {
@@ -163,6 +175,18 @@ export default {
           return item[headers[key]]
         })
       })
+    },
+    // 二维码
+    showQrCode(url) {
+      // url存在的情况下，才弹出层
+      if (url) {
+        this.showCodeDialog = true // 页面渲染是异步的！
+        this.$nextTick(() => {
+          QrCode.toCanvas(this.$refs.myCanvas, url)
+        })
+      } else {
+        this.$message.warning('该用户还未上传头像')
+      }
     }
   }
 }
