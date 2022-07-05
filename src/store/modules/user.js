@@ -1,5 +1,6 @@
 import { getToken, setToken, removeToken, setTimeStamp } from '@/utils/auth'
 import { login, getUserInfo, getUserDetailById } from '@/api/user'
+import { resetRouter } from '@/router'
 
 // 状态
 // 初始化的时候从缓存中读取状态 并赋值到初始化的状态上
@@ -53,9 +54,13 @@ const actions = {
     context.commit('setUserInfo', baseResult)
     return baseResult
   },
+  // 登出的action
   logout(context) {
     context.commit('removeToken')
     context.commit('removeUserInfo')
+    // 重置路由信息
+    resetRouter()
+    context.commit('permission/setRoutes', [], { root: true })
   }
 }
 
