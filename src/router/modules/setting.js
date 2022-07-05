@@ -2,8 +2,8 @@ import Layout from '@/layout'
 
 export default {
   path: '/setting',
-  name: 'setting',
   component: Layout,
+  name: 'setting',
 
   children: [{
     path: '',
