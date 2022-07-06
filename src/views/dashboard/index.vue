@@ -24,7 +24,8 @@
           <div slot="header" class="header">
             <span>工作日历</span>
           </div>
-        <!-- 放置日历组件 -->
+          <!-- 放置日历组件 -->
+          <work-canlendar />
         </el-card>
         <!-- 公告 -->
         <el-card class="box-card">
@@ -119,10 +120,14 @@
 </template>
 
 <script>
+import WorkCanlendar from './components/work-calendar.vue'
 import { mapGetters, createNamespacedHelpers } from 'vuex'
 const { mapState } = createNamespacedHelpers('user')
 export default {
   name: 'Dashboard',
+  components: {
+    WorkCanlendar
+  },
   data() {
     return {
       defaultImg: require('@/assets/common/head.jpg')
