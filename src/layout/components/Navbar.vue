@@ -12,6 +12,8 @@
     <!-- <breadcrumb class="breadcrumb-container" /> -->
 
     <div class="right-menu">
+      <!-- 颜色插件 -->
+      <theme-picker class="right-menu-item" />
       <!-- 全屏组件 -->
       <screen-full class="right-menu-item" />
       <el-dropdown class="avatar-container" trigger="click">
